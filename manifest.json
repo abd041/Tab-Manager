@@ -1,0 +1,13 @@
+{
+  "name": "Smart Tab Manager",
+  "description": "Manage, clean, and group your tabs efficiently",
+  "version": "1.0",
+  "manifest_version": 3,
+
+  "permissions": ["tabs", "tabGroups"],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Manager"
+  }
+}
