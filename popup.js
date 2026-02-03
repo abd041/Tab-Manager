@@ -4,10 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const groupTabsBtn = document.getElementById("groupTabsBtn");
   const tabsContainer = document.getElementById("tabsContainer");
   const ungroupTabsBtn = document.getElementById("ungroupTabsBtn");
+const tabCountEl = document.getElementById("tabCount");
 
   function renderTabs() {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       tabsContainer.innerHTML = "";
+
+if (tabs.length === 0) {
+  tabsContainer.innerHTML = "<p>No tabs found</p>";
+  return;
+}
+
+tabCountEl.textContent = `Total tabs: ${tabs.length}`;
 
       tabs.forEach((tab) => {
         const tabEl = document.createElement("div");
@@ -33,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTabsBtn.addEventListener("click", renderTabs);
 
   closeDuplicatesBtn.addEventListener("click", () => {
+    if (!confirm("Close all duplicate tabs?")) return;
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       const seenUrls = new Set();
       const duplicateTabIds = [];
@@ -84,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   ungroupTabsBtn.addEventListener("click", () => {
+    if (!confirm("Ungroup all tabs?")) return;
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     const groupedTabIds = tabs
       .filter(tab => tab.groupId !== -1)
