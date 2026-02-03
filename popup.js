@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const loadTabsBtn = document.getElementById("loadTabsBtn");
+  const closeDuplicatesBtn = document.getElementById("closeDuplicatesBtn");
   const tabsContainer = document.getElementById("tabsContainer");
 
-  loadTabsBtn.addEventListener("click", () => {
+  function renderTabs() {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       tabsContainer.innerHTML = "";
 
@@ -19,11 +20,37 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         tabEl.addEventListener("click", () => {
-          chrome.tabs.update(tab.id, { active: true });
+         chrome.tabs.update(tab.id, { active: true });
         });
 
         tabsContainer.appendChild(tabEl);
       });
     });
+  }
+
+  loadTabsBtn.addEventListener("click", renderTabs);
+
+  closeDuplicatesBtn.addEventListener("click", () => {
+    chrome.tabs.query({ currentWindow: true }, (tabs) => {
+      const seenUrls = new Set();
+      const duplicateTabIds = [];
+
+      tabs.forEach((tab) => {
+        if (seenUrls.has(tab.url)) {
+          duplicateTabIds.push(tab.id);
+        } else {
+          seenUrls.add(tab.url);
+        }
+      });
+
+      if (duplicateTabIds.length > 0) {
+        chrome.tabs.remove(duplicateTabIds, () => {
+          renderTabs();
+        });
+      }
+    });
   });
+
+  // auto-load on open
+  renderTabs();
 });
