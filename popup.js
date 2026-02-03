@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const loadTabsBtn = document.getElementById("loadTabsBtn");
   const closeDuplicatesBtn = document.getElementById("closeDuplicatesBtn");
+  const groupTabsBtn = document.getElementById("groupTabsBtn");
   const tabsContainer = document.getElementById("tabsContainer");
 
   function renderTabs() {
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         tabEl.addEventListener("click", () => {
-         chrome.tabs.update(tab.id, { active: true });
+          chrome.tabs.update(tab.id, { active: true });
         });
 
         tabsContainer.appendChild(tabEl);
@@ -36,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const duplicateTabIds = [];
 
       tabs.forEach((tab) => {
+        if (tab.pinned) return;
+
         if (seenUrls.has(tab.url)) {
           duplicateTabIds.push(tab.id);
         } else {
@@ -44,13 +47,39 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (duplicateTabIds.length > 0) {
-        chrome.tabs.remove(duplicateTabIds, () => {
-          renderTabs();
-        });
+        chrome.tabs.remove(duplicateTabIds, renderTabs);
       }
     });
   });
 
-  // auto-load on open
+  groupTabsBtn.addEventListener("click", () => {
+    chrome.tabs.query({ currentWindow: true }, (tabs) => {
+      const domainMap = {};
+
+      tabs.forEach((tab) => {
+        if (tab.pinned) return;
+
+        const domain = new URL(tab.url).hostname;
+
+        if (!domainMap[domain]) {
+          domainMap[domain] = [];
+        }
+
+        domainMap[domain].push(tab.id);
+      });
+
+      Object.entries(domainMap).forEach(([domain, tabIds]) => {
+        if (tabIds.length < 2) return;
+
+        chrome.tabs.group({ tabIds }, (groupId) => {
+          chrome.tabGroups.update(groupId, {
+            title: domain,
+            color: "blue"
+          });
+        });
+      });
+    });
+  });
+
   renderTabs();
 });
