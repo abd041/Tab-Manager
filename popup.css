@@ -1,10 +1,56 @@
 body {
-  font-family: Arial, sans-serif;
-  width: 300px;
+  font-family: system-ui, -apple-system, sans-serif;
+  width: 360px;
   padding: 10px;
 }
 
 h1 {
-  font-size: 18px;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+#loadTabsBtn {
+  width: 100%;
+  padding: 6px;
   margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#tabsContainer {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.tab-item {
+  display: flex;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tab-item:hover {
+  background: #f1f1f1;
+}
+
+.tab-item img {
+  width: 16px;
+  height: 16px;
+}
+
+.tab-info {
+  flex: 1;
+}
+
+.tab-title {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-domain {
+  font-size: 11px;
+  color: #666;
 }
