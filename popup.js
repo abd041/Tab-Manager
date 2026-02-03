@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeDuplicatesBtn = document.getElementById("closeDuplicatesBtn");
   const groupTabsBtn = document.getElementById("groupTabsBtn");
   const tabsContainer = document.getElementById("tabsContainer");
+  const ungroupTabsBtn = document.getElementById("ungroupTabsBtn");
 
   function renderTabs() {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
@@ -80,6 +81,23 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
+
+
+  ungroupTabsBtn.addEventListener("click", () => {
+  chrome.tabs.query({ currentWindow: true }, (tabs) => {
+    const groupedTabIds = tabs
+      .filter(tab => tab.groupId !== -1)
+      .map(tab => tab.id);
+
+    if (groupedTabIds.length === 0) return;
+
+    chrome.tabs.ungroup(groupedTabIds, () => {
+      renderTabs();
+    });
+  });
+});
+
+
 
   renderTabs();
 });

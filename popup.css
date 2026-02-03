@@ -32,6 +32,14 @@ h1 {
   background: #eef4ff;
 }
 
+#ungroupTabsBtn {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background: #f4f4f4;
+}
+
 #tabsContainer {
   max-height: 400px;
   overflow-y: auto;
